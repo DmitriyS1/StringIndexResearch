@@ -54,7 +54,7 @@ func (h *CandidatesHandler) EndsSearchCandidates(w http.ResponseWriter, r *http.
 	return
 }
 
-func (h *CandidatesHandler) GetCandidateById(w http.ResponseWriter, r *http.Request) {
+func (h *CandidatesHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	id, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
 	candidate, err := h.storage.Candidates.GetById(r.Context(), id)

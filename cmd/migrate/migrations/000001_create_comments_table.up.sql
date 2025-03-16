@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS comments(
+    id bigserial PRIMARY KEY,
+    text TEXT NOT NULL,
+    created TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT NOW()
+);

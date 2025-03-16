@@ -7,19 +7,19 @@ import (
 )
 
 type PostgresDb struct {
-	db *pgxpool.Pool
+	DB *pgxpool.Pool
 }
 
-func NewPostgresDb(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
+func NewPostgresDb(ctx context.Context, dbUrl string) PostgresDb {
 	dbConfig, err := pgxpool.ParseConfig(dbUrl)
 	if err != nil {
 		log.Fatalln("Unable to parse database URL:", err)
 	}
 
-	db, err := pgxpool.NewWithConfig(context.Background(), dbConfig)
+	db, err := pgxpool.NewWithConfig(ctx, dbConfig)
 	if err != nil {
 		log.Fatalln("Unable to create connection pool:", err)
 	}
 
-	return db, nil
+	return PostgresDb{DB: db}
 }
