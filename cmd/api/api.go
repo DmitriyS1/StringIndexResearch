@@ -33,8 +33,11 @@ func (app *app) run() error {
 	router.HandleFunc("GET /api/v1/comments/starts/{search}", commentsHandler.StartsSearchComments)
 	router.HandleFunc("GET /api/v1/comments/ends/{search}", commentsHandler.EndsSearchComments)
 	router.HandleFunc("GET /api/v1/comments/{id}", commentsHandler.GetById)
-	router.HandleFunc("GET /api/v1/comments/{id}", handler.getCommentHandler)
-	router.HandleFunc("GET /api/v1/candidates/titles/{search}", handler.candidatesTitlesHandler)
+
+	router.HandleFunc("GET /api/v1/candidates/full/{search}", candidatesHandler.FullSearchCandidates)
+	router.HandleFunc("GET /api/v1/candidates/starts/{search}", candidatesHandler.StartsSearchCandidates)
+	router.HandleFunc("GET /api/v1/candidates/ends/{search}", candidatesHandler.EndsSearchCandidates)
+	router.HandleFunc("GET /api/v1/candidates/{id}", candidatesHandler.GetById)
 
 	err := http.ListenAndServe(app.config.addr, router)
 	if err != nil {

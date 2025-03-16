@@ -25,7 +25,7 @@ func NewCandidateStore(db *pgxpool.Pool) *CandidateStore {
 }
 
 func (s *CandidateStore) FullSearch(ctx context.Context, query string) ([]Candidate, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE first_name LIKE $1", query)
+	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE $1", query)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (s *CandidateStore) FullSearch(ctx context.Context, query string) ([]Candid
 }
 
 func (s *CandidateStore) StartsWithSearch(ctx context.Context, query string) ([]Candidate, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE first_name LIKE $1%", query)
+	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE $1%", query)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (s *CandidateStore) StartsWithSearch(ctx context.Context, query string) ([]
 }
 
 func (s *CandidateStore) EndsWithSearch(ctx context.Context, query string) ([]Candidate, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE first_name LIKE %$1", query)
+	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE %$1", query)
 	if err != nil {
 		return nil, err
 	}
