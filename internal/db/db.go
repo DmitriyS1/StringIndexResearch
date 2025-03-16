@@ -6,7 +6,11 @@ import (
 	"log"
 )
 
-func NewPostgresDb(dbUrl string) (*pgxpool.Pool, error) {
+type PostgresDb struct {
+	db *pgxpool.Pool
+}
+
+func NewPostgresDb(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
 	dbConfig, err := pgxpool.ParseConfig(dbUrl)
 	if err != nil {
 		log.Fatalln("Unable to parse database URL:", err)

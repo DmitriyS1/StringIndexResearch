@@ -1,4 +1,4 @@
-module StringIndexResearch
+module github.com/dmitriys1/StringIndexResearch
 
 go 1.23
 

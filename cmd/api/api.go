@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/dmitriys1/StringIndexResearch/handlers"
 	"log"
 	"net/http"
 
@@ -19,13 +20,19 @@ type config struct {
 
 type app struct {
 	config config
-	store  &store.Store
+	store  *store.Storage
 }
 
 func (app *app) run() error {
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /api/v1/comments/{search}", handler.searchCommentsHandler)
+	commentsHandler := handlers.NewCommentsHandler(app.store)
+	candidatesHandler := handlers.NewCandidatesHandler(app.store)
+
+	router.HandleFunc("GET /api/v1/comments/full/{search}", commentsHandler.FullSearchComments)
+	router.HandleFunc("GET /api/v1/comments/starts/{search}", commentsHandler.StartsSearchComments)
+	router.HandleFunc("GET /api/v1/comments/ends/{search}", commentsHandler.EndsSearchComments)
+	router.HandleFunc("GET /api/v1/comments/{id}", commentsHandler.GetById)
 	router.HandleFunc("GET /api/v1/comments/{id}", handler.getCommentHandler)
 	router.HandleFunc("GET /api/v1/candidates/titles/{search}", handler.candidatesTitlesHandler)
 
