@@ -8,8 +8,13 @@ import (
 func main() {
 	pDb := db.NewPostgresDb(context.Background(), "postgres://admin:adminpassword@localhost:5432/string_index?sslmode=disable")
 
-	err := db.SeedDatabase(pDb)
+	err := db.SeedCandidatesTable(pDb)
 	if err != nil {
 		panic(err)
 	}
+
+	//err = db.SeedCommentsTable(pDb)
+	//if err != nil {
+	//	panic(err)
+	//}
 }
