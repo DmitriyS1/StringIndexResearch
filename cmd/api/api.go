@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/dmitriys1/StringIndexResearch/handlers"
 	"log"
 	"net/http"
@@ -18,12 +19,17 @@ type config struct {
 	env    string
 }
 
+func (cfg *config) GetDbUrl() string {
+	return "postgres://" + cfg.dbUser + ":" + cfg.dbPass + "@" + cfg.dbHost + ":" + cfg.dbPort + "/" + cfg.dbName + "?sslmode=disable"
+}
+
 type app struct {
 	config config
 	store  *store.Storage
 }
 
 func (app *app) run() error {
+	fmt.Println("Starting server on " + app.config.addr)
 	router := http.NewServeMux()
 
 	commentsHandler := handlers.NewCommentsHandler(app.store)

@@ -17,7 +17,7 @@ func NewCandidatesHandler(storage *store.Storage) *CandidatesHandler {
 
 func (h *CandidatesHandler) FullSearchCandidates(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	search := r.URL.Query().Get("search")
+	search := r.URL.Path[len("/api/v1/candidates/full/"):]
 	candidates, err := h.storage.Candidates.FullSearch(r.Context(), search)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

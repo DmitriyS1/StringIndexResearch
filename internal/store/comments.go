@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"github.com/dmitriys1/StringIndexResearch/internal/db"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -13,15 +14,15 @@ type Comment struct {
 	Created pgtype.Date `json:"created"`
 }
 
-type CommentStore struct {
+type CommentsStore struct {
 	db *pgxpool.Pool
 }
 
-func NewCommentStore(db *pgxpool.Pool) *CommentStore {
-	return &CommentStore{db: db}
+func NewCommentStore(db *db.PostgresDb) *CommentsStore {
+	return &CommentsStore{db: db.DB}
 }
 
-func (s *CommentStore) FullSearch(ctx context.Context, query string) ([]Comment, error) {
+func (s *CommentsStore) FullSearch(ctx context.Context, query string) ([]Comment, error) {
 	rows, err := s.db.Query(ctx, "SELECT * FROM comments WHERE text ILIKE %$1%", query)
 	if err != nil {
 		return nil, err
@@ -31,7 +32,7 @@ func (s *CommentStore) FullSearch(ctx context.Context, query string) ([]Comment,
 	return pgx.CollectRows(rows, pgx.RowToStructByName[Comment])
 }
 
-func (s *CommentStore) StartsWithSearch(ctx context.Context, query string) ([]Comment, error) {
+func (s *CommentsStore) StartsWithSearch(ctx context.Context, query string) ([]Comment, error) {
 	rows, err := s.db.Query(ctx, "SELECT * FROM comments WHERE text ILIKE $1%", query)
 	if err != nil {
 		return nil, err
@@ -42,7 +43,7 @@ func (s *CommentStore) StartsWithSearch(ctx context.Context, query string) ([]Co
 	return pgx.CollectRows(rows, pgx.RowToStructByName[Comment])
 }
 
-func (s *CommentStore) EndsWithSearch(ctx context.Context, query string) ([]Comment, error) {
+func (s *CommentsStore) EndsWithSearch(ctx context.Context, query string) ([]Comment, error) {
 	rows, err := s.db.Query(ctx, "SELECT * FROM comments WHERE text ILIKE %$1", query)
 	if err != nil {
 		return nil, err
@@ -53,13 +54,13 @@ func (s *CommentStore) EndsWithSearch(ctx context.Context, query string) ([]Comm
 	return pgx.CollectRows(rows, pgx.RowToStructByName[Comment])
 }
 
-func (s *CommentStore) GetById(ctx context.Context, id int64) (Comment, error) {
+func (s *CommentsStore) GetById(ctx context.Context, id int64) (*Comment, error) {
 	row := s.db.QueryRow(ctx, "SELECT * FROM comments WHERE id = $1", id)
 	var c Comment
 	err := row.Scan(&c.ID, &c.Text, &c.Created)
 	if err != nil {
-		return Comment{}, err
+		return &Comment{}, err
 	}
 
-	return c, nil
+	return &c, nil
 }

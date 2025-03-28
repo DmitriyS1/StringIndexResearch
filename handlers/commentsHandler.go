@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/dmitriys1/StringIndexResearch/internal/store"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -18,7 +19,8 @@ func NewCommentsHandler(storage *store.Storage) *CommentsHandler {
 
 func (h *CommentsHandler) FullSearchComments(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	search := r.URL.Query().Get("search")
+	log.Printf("FullSearchComments")
+	search := r.URL.Path[len("/api/v1/comments/full/"):]
 	comments, err := h.storage.Comments.FullSearch(r.Context(), search)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

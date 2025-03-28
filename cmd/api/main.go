@@ -1,21 +1,35 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"github.com/dmitriys1/StringIndexResearch/internal/db"
+	storage "github.com/dmitriys1/StringIndexResearch/internal/store"
+	"log"
+	"os"
 )
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
-
 func main() {
-	//TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-	// to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-	s := "gopher"
-	fmt.Printf("Hello and welcome, %s!\n", s)
+	cfg := config{
+		addr:   os.Getenv("APP_ADDRESS"),
+		dbHost: os.Getenv("DB_HOST"),
+		dbPort: os.Getenv("DB_PORT"),
+		dbUser: os.Getenv("DB_USER"),
+		dbPass: os.Getenv("DB_PASSWORD"),
+		dbName: os.Getenv("DB_NAME"),
+		env:    os.Getenv("ENV"),
+	}
+	pgxPool := db.NewPostgresDb(context.Background(), cfg.GetDbUrl())
+	cmtsStore := storage.NewCommentStore(&pgxPool)
+	cndtsStore := storage.NewCandidateStore(&pgxPool)
+	store := storage.NewStorage(*cmtsStore, *cndtsStore)
 
-	for i := 1; i <= 5; i++ {
-		//TIP <p>To start your debugging session, right-click your code in the editor and select the Debug option.</p> <p>We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-		// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.</p>
-		fmt.Println("i =", 100/i)
+	app := app{
+		config: cfg,
+		store:  store,
+	}
+
+	err := app.run()
+	if err != nil {
+		log.Fatal(err)
 	}
 }

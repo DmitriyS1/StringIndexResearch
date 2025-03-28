@@ -12,9 +12,4 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	//err = db.SeedCommentsTable(pDb)
-	//if err != nil {
-	//	panic(err)
-	//}
 }

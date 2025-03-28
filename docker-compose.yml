@@ -19,7 +19,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-    container_name: social-go
+    container_name: string-index-api
     environment:
       - APP_ADDRESS=localhost:8080
       - DB_HOST=postgres-db-string-index
@@ -27,7 +27,7 @@ services:
       - DB_USER=admin
       - DB_PASSWORD=adminpassword
       - DB_NAME=string_index
-      - ENVIRONMENT=development
+      - ENV=docker
     depends_on:
       - db
     ports:
