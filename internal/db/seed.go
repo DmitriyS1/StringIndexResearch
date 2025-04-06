@@ -62,12 +62,12 @@ func SeedCandidatesTable(db PostgresDb) error {
 			lastName := lastNames[r.Intn(len(lastNames))]
 			email := fmt.Sprintf("%s.%s%d@%s", firstName, lastName, r.Intn(23457111), emails[r.Intn(len(emails))])
 
-			skillsNum := r.Intn(5) + 1
+			skillsNum := r.Intn(6) + 3
 			usedSkills := make(map[int]struct{})
 			title := strings.Builder{}
 
 			for j := 0; len(usedSkills) < skillsNum; j++ {
-				rSkill := r.Intn(skillsNum)
+				rSkill := r.Intn(len(titles))
 				if _, ok := usedSkills[rSkill]; ok {
 					continue
 				}

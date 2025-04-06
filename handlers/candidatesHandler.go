@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	hlp "github.com/dmitriys1/StringIndexResearch/helpers/http"
 	"github.com/dmitriys1/StringIndexResearch/internal/store"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type CandidatesHandler struct {
@@ -18,7 +20,22 @@ func NewCandidatesHandler(storage *store.Storage) *CandidatesHandler {
 func (h *CandidatesHandler) FullSearchCandidates(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	search := r.URL.Path[len("/api/v1/candidates/full/"):]
-	candidates, err := h.storage.Candidates.FullSearch(r.Context(), search)
+	pageParam := r.URL.Query().Get("page")
+	amountParam := r.URL.Query().Get("amount")
+
+	page, err := strconv.Atoi(pageParam)
+	if err != nil {
+		page = 0
+	}
+
+	amount, err := strconv.Atoi(amountParam)
+	if err != nil {
+		amount = 100
+	}
+
+	t := time.Now()
+	candidates, err := h.storage.Candidates.FullSearch(r.Context(), search, page, amount)
+	fmt.Printf("Request to DB with mapping took: %v with Search string: %s; Page: %d; Amount: %d\n", time.Since(t), search, page, amount)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

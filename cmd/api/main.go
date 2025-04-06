@@ -23,7 +23,7 @@ func main() {
 	cndtsStore := storage.NewCandidateStore(&pgxPool)
 	store := storage.NewStorage(*cmtsStore, *cndtsStore)
 
-	app := app{
+	app := api{
 		config: cfg,
 		store:  store,
 	}

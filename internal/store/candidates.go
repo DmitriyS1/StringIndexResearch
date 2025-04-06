@@ -2,10 +2,12 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"github.com/dmitriys1/StringIndexResearch/internal/db"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
 )
 
 type Candidate struct {
@@ -25,8 +27,10 @@ func NewCandidateStore(db *db.PostgresDb) *CandidatesStore {
 	return &CandidatesStore{db: db.DB}
 }
 
-func (s *CandidatesStore) FullSearch(ctx context.Context, query string) ([]Candidate, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE '%'||$1||'%' LIMIT 200", query)
+func (s *CandidatesStore) FullSearch(ctx context.Context, query string, page int, amount int) ([]Candidate, error) {
+	t := time.Now()
+	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE '%'||$1||'%' LIMIT $2 OFFSET $3", query, amount, page*amount)
+	fmt.Printf("Query in FullSearch took: %v with Search string: %s\n", time.Since(t), query)
 	if err != nil {
 		return nil, err
 	}
