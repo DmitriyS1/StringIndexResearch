@@ -32,28 +32,6 @@ func (s *CommentsStore) FullSearch(ctx context.Context, query string) ([]Comment
 	return pgx.CollectRows(rows, pgx.RowToStructByName[Comment])
 }
 
-func (s *CommentsStore) StartsWithSearch(ctx context.Context, query string) ([]Comment, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM comments WHERE text ILIKE $1%", query)
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	return pgx.CollectRows(rows, pgx.RowToStructByName[Comment])
-}
-
-func (s *CommentsStore) EndsWithSearch(ctx context.Context, query string) ([]Comment, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM comments WHERE text ILIKE %$1", query)
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	return pgx.CollectRows(rows, pgx.RowToStructByName[Comment])
-}
-
 func (s *CommentsStore) GetById(ctx context.Context, id int64) (*Comment, error) {
 	row := s.db.QueryRow(ctx, "SELECT * FROM comments WHERE id = $1", id)
 	var c Comment

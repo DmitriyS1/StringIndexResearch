@@ -12,7 +12,7 @@ import (
 
 type Candidate struct {
 	ID        int64  `json:"id"`
-	FirstName string `json:"name"`
+	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Title     string `json:"title"`
@@ -29,30 +29,11 @@ func NewCandidateStore(db *db.PostgresDb) *CandidatesStore {
 
 func (s *CandidatesStore) FullSearch(ctx context.Context, query string, page int, amount int) ([]Candidate, error) {
 	t := time.Now()
-	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE '%'||$1||'%' LIMIT $2 OFFSET $3", query, amount, page*amount)
+	rows, err := s.db.Query(
+		ctx,
+		"SELECT * FROM candidates WHERE title ILIKE '%'||$1||'%' ORDER BY first_name, last_name LIMIT $2 OFFSET $3;",
+		query, amount, page*amount)
 	fmt.Printf("Query in FullSearch took: %v with Search string: %s\n", time.Since(t), query)
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	return pgx.CollectRows(rows, pgx.RowToStructByName[Candidate])
-}
-
-func (s *CandidatesStore) StartsWithSearch(ctx context.Context, query string) ([]Candidate, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE $1||'%'", query)
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	return pgx.CollectRows(rows, pgx.RowToStructByName[Candidate])
-}
-
-func (s *CandidatesStore) EndsWithSearch(ctx context.Context, query string) ([]Candidate, error) {
-	rows, err := s.db.Query(ctx, "SELECT * FROM candidates WHERE title ILIKE '%'||$1", query)
 	if err != nil {
 		return nil, err
 	}

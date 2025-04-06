@@ -31,32 +31,6 @@ func (h *CommentsHandler) FullSearchComments(w http.ResponseWriter, r *http.Requ
 	return
 }
 
-func (h *CommentsHandler) StartsSearchComments(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	search := r.URL.Query().Get("search")
-	comments, err := h.storage.Comments.StartsWithSearch(r.Context(), search)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	hlp.RespondOk(comments, w, r)
-	return
-}
-
-func (h *CommentsHandler) EndsSearchComments(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	search := r.URL.Query().Get("search")
-	comments, err := h.storage.Comments.EndsWithSearch(r.Context(), search)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	hlp.RespondOk(comments, w, r)
-	return
-}
-
 func (h *CommentsHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	id, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
